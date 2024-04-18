@@ -12,6 +12,9 @@ public class MailClient
     // The user running this client.
     private String user;
 
+    private int numeroMensaje;
+
+    private MailItem ultimoMensaje;
     /**
      * Create a mail client run by user and attached to the given server.
      */
@@ -50,9 +53,36 @@ public class MailClient
      * @param to The intended recipient.
      * @param message The text of the message to be sent.
      */
-    public void sendMailItem(String to, String message)
+    public int sendMailItem(String to, String subject, String message)
     {
-        MailItem item = new MailItem(user, to, message);
+        MailItem item = new MailItem(user, to, subject, message);
         server.post(item);
+        numeroMensaje++;
+        ultimoMensaje = item;
+        return numeroMensaje;
+
+    }
+
+    public int getNumberOfMessageInServer(){
+        return numeroMensaje;
+    } 
+
+    public MailItem getLastReceivedMail(){
+        return ultimoMensaje;
+    }
+
+    public String receiveAndAutorespond(){
+        String message = ultimoMensaje.getMessage();
+        System.out.println("Gracias por su mensaje. Le contestare lo antes posible." + message);
+        return message;
+    }
+
+    public String getStatus(){
+        int numberOfMessages = getNumberOfMessageInServer();
+        MailItem lastReceivedMail = getLastReceivedMail();
+        String status = numberOfMessages + "," + lastReceivedMail;
+        System.out.println(status);
+        return status;
+
     }
 }
